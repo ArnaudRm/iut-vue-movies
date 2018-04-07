@@ -1,7 +1,11 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import axios from "axios";
 
 Vue.use(Vuex);
+
+const BASE_URL = 'http://localhost:3000/api/';
+
 
 // root state object.
 // each Vuex instance is just a single state tree.
@@ -19,10 +23,24 @@ const state = {
 // mutations must be synchronous and can be recorded by plugins
 // for debugging purposes.
 const mutations = {
-    newMovie(state, movie) {
-        movie.id = state.generated_id;
-        state.generated_id += 1;
+
+    addMovie(state, movie) {
         state.movies.push(movie);
+    },
+    deleteMovie(state, movie) {
+
+    },
+    getMovies() {
+        const url = `${BASE_URL}movie`;
+        axios(url, {
+            method: 'GET',
+        })
+            .then(res => {
+                state.movies = res.data;
+            })
+            .catch(err => {
+                console.log("error :", err)
+            });
     },
     remove(state, index) {
         state.movies.splice(index, 1);
@@ -39,6 +57,7 @@ const mutations = {
 // asynchronous operations.
 const actions = {
     newMovie: ({commit}) => commit('newMovie'),
+    getMovies: ({commit}) => commit('getMovies'),
     remove: ({commit}) => commit('removeMovie'),
     edit: ({commit}) => commit('editMovie'),
     save: ({commit}) => commit('saveMovie'),
@@ -46,8 +65,9 @@ const actions = {
 
 // getters are functions
 const getters = {
-    search_movies : state => state.movies.filter(m => m.title.toLowerCase().indexOf(state.search.toLowerCase())!=-1),
-    moviesExist: state => state.movies.length !== 0 ,
+    search_movies: state => state.movies.filter(m => m.title.toLowerCase().indexOf(state.search.toLowerCase()) != -1),
+    moviesExist: state => state.movies.length !== 0,
+
 };
 
 // A Vuex instance is created by combining the state, mutations, actions,
@@ -57,4 +77,4 @@ export default new Vuex.Store({
     getters,
     actions,
     mutations
-})
+});

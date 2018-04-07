@@ -49,9 +49,7 @@
 
         methods: {
             ...mapActions([
-                'remove',
-                'edit',
-                'save',
+                'getMovies',
             ]),
 
             beforeEnter(el) {
@@ -77,6 +75,10 @@
                     );
                 }, delay);
             },
+        },
+        mounted() {
+            console.log('ici');
+            this.$store.commit('getMovies');
         },
     };
 

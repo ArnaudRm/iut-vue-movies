@@ -4,7 +4,7 @@
             class="flex xs12 sm6 md4"
             raised
     >
-        <v-card-media style="height: 200px" :src="require(`../static/uploads/${movie.movieImageName}`)">
+        <v-card-media style="height: 200px" v-bind:src="getImage()">
         </v-card-media>
         <v-card-title primary-title>
             <div class="movie-title-container">
@@ -63,7 +63,10 @@
             handleDetails(movieId) {
                 this.$router.push({ path : `/movie/${movieId}`});
             },
-
+            getImage() {
+                const src = this.movie.url || require(`../static/uploads/${movie.image}`) || require('../static/placeholder.png');
+                return src;
+            }
         },
         computed: {
             movieClass() {

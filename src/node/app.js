@@ -1,29 +1,42 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-
+const path = require("path");
+const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const routes = require("./routes");
 const cors = require('cors');
-
+/**
+ *	Usuals express middlewares
+ */
 app.use(cors());
+app.use(express.query());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(express.static('./src/static'));
+app.use(methodOverride(function (req, res) {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+        const method = req.body._method;
+        delete req.body._method;
+        return method;
+    }
+    else if (req.query && typeof req.query === 'object' && '_method' in req.query) {
+        const method = req.query._method;
+        delete req.query._method;
+        return method;
+    }
+}, {methods: ['GET', 'POST']}));
 
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'src/static/uploads/');
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
-  }
+app.use("/api", routes);
+
+app.get("/", function(req, res) {
+    res.sendFile(path.resolve("./dist/index.html"));
 });
 
-const upload = multer({ storage });
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(`${__dirname}/index.html`));
+app.use( (req, res) => {
+    res.status(404);
+    res.json('{"error": "the method doesn\"t exist on this url"}');
+    res.end();
 });
 
-app.post('/uploads', upload.single('movieImage'), (req, res) => res.json({ error: false, movieImageName: req.file.filename, message: 'Success ! your image was upload successfully' }));
-
-app.listen(3000, () => {
-  console.log('app listening on port 3000!');
-});
+app.listen(3000);
+console.log("listen on port 3000");
