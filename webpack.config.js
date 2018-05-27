@@ -1,18 +1,13 @@
-var path = require('path')
-var webpack = require('webpack')
+var path = require('path');
+var webpack = require('webpack');
+const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
-    entry: {
-        app: [
-            'babel-polyfill',
-            './src/main.js'
-        ]
-    },
+    entry: './src/vue/main.js',
     output: {
-        path: path.resolve(__dirname, './dist'),
-        publicPath: '/dist/',
-        filename: 'build.js'
+        path: path.resolve(__dirname, './src/dist'),
+        // publicPath: '/dist/',
+        // filename: 'build.js'
     },
     module: {
         rules: [
@@ -38,7 +33,7 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.(png|jpg|jpeg||gif|svg)$/,
+                test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]?[hash]'
@@ -52,15 +47,23 @@ module.exports = {
         },
         extensions: ['*', '.js', '.vue', '.json']
     },
+    watch: true,
+    watchOptions: {
+        ignored: /node_modules/
+    },
     devServer: {
         historyApiFallback: true,
-        noInfo: true,
-        overlay: true
+        hot: true,
+        overlay: true,
+        proxy: [{
+            context: ["/image", "/api"],
+            target: "http://localhost:3000"
+        }]
     },
     performance: {
         hints: false
     },
-    devtool: '#eval-source-map'
+    devtool: 'source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -82,4 +85,11 @@ if (process.env.NODE_ENV === 'production') {
             minimize: true
         })
     ])
+}
+else {
+    module.exports.plugins = [
+        new htmlWebpackPlugin({
+            template: "./src/dist/index.html"
+        })
+    ]
 }
