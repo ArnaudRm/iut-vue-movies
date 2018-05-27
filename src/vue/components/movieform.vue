@@ -208,7 +208,6 @@
                 if(this.getMovieById(this.$route.params.id) === undefined){
                     fetch("/api/movie?id=" + this.$route.params.id).then(res => res.json())
                         .then(obj => {
-                            console.log('OBJ',obj);
                             this.previousMovie = obj;
                             this.imageSrc = require(`../../static/uploads/${this.previousMovie.image}`);
                             this.movie = Object.assign({}, this.previousMovie );
@@ -236,9 +235,7 @@
             }
         },
         mounted() {
-            console.log('mounted')
             if (this.isEditForm) {
-                console.log('editform')
                 this.initForm();
             } else {
                 this.imageSrc = defaultImage;

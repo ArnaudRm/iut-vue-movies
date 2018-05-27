@@ -62,14 +62,12 @@ export default {
   },
     watch: {
         value(val) {
-            console.log('ici');
             this.$emit('input', val);
         }
     },
 
   created() {
     if (this.defaultValue !== undefined) {
-        console.log(this.defaultValue)
       this.value = this.defaultValue;
     }
   },

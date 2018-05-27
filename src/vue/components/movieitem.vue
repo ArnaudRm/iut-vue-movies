@@ -80,7 +80,6 @@
                 return this.$vuetify.breakpoint.smAndDown ? 'movie-card-sm' : 'movie-card';
             },
             movieYear() {
-                console.log(this.movie);
                 return new Date(this.movie.date).getFullYear();
             }
 
